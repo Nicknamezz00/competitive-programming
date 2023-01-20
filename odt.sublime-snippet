@@ -1,0 +1,51 @@
+<snippet>
+  <content><![CDATA[
+class odt {
+ public:
+  struct node {
+    int l, r;
+    mutable int v;
+    node(int _l, int _r, int _v) : l(_l), r(_r), v(_v) {}
+    inline bool operator<(const node &o) const { return l < o.l; }
+  }
+
+  set<node> tree;
+  int n;
+
+  auto split(int x) {
+    if (x > n) return tree.end();
+    auto it = --tree.upper_bound(node{x, 0, 0});
+    if (it->l == x) return it;
+    int l = it->l, r = it->r, v = it->v;
+    tree.erase(it);
+    tree.insert(node(l, x - 1, v));
+    return tree.insert(node(x, r, v)).first;
+  }
+
+  void assign(int l, int r, int v) {
+    auto itr = split(r + 1), itl = split(l);
+    tree.erase(itl, itr);
+    tree.insert(node(l, r, v));
+  }
+
+  void apply(int l, int r) {
+    auto itr = split(r + 1), itl = split(l);
+    for (; itl != itr; ++itl) {
+      // Apply operations
+    }
+  }
+
+  template<typename T>
+  odt(const vector<T> &v) {
+    for (int i = 0; i < (int) v.size(); i++) {
+      tree.insert({i, i, v[i]});
+    }
+  }
+};
+
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>odt</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <scope>source.c++</scope>
+</snippet>

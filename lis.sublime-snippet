@@ -1,0 +1,23 @@
+<snippet>
+  <content><![CDATA[
+template<typename T>
+int lis(const vector<T>& a) {
+  vector<T> u;
+  for (const T& x : a) {
+    auto it = upper_bound(u.begin(), u.end(), x);
+    if (it == u.end()) {
+      u.push_back(x);
+    } else {
+      *it = x;
+    }
+  }
+  return (int) u.size();
+  // returns the length of longest increase (not strictly) subsequence.
+}
+
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>lis</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <scope>source.c++</scope>
+</snippet>

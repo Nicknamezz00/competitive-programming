@@ -1,0 +1,106 @@
+<snippet>
+  <content><![CDATA[
+class psegtree {
+ public:
+  const int space = 5;
+
+  struct node {
+    int l, r;
+    // extra variables...
+    int cnt;
+  };
+
+  inline void apply_change(node &nd) {
+    nd.cnt += 1;
+  }
+
+  inline void pull(node &nd) {
+    nd.cnt = tree[nd.l].cnt + tree[nd.r].cnt;
+  }
+
+  int n, lb, rb;
+  int idx;
+  vector<node> tree;
+  vector<int> ptr;
+
+  int build(int l, int r) {
+    int v = idx++;
+    if (l == r) {
+      return l;
+    }
+    int y = (l + r) >> 1;
+    tree[v].l = build(l, y);
+    tree[v].r = build(y + 1, r);
+    return v;
+  }
+
+  template<typename T>
+  T update(int old, int l, int r, T val) {
+    int v = idx++;
+    tree[v] = tree[old];
+    if (l == r) {
+      apply_change(tree[v]);
+      return v;
+    }
+    int y = (l + r) >> 1;
+    if (val <= y) {
+      tree[v].l = update(tree[old].l, l, y, val);
+    } else {
+      tree[v].r = update(tree[old].r, y + 1, r, val);
+    }
+    pull(tree[v]);
+    return v;
+  }
+
+  int find_kth(int prst, int hist, int l, int r, int k) {
+    if (l == r) {
+      return l;
+    }
+    int left = tree[tree[prst].l].cnt - tree[tree[hist].l].cnt;
+    int y = (l + r ) >> 1;
+    if (k <= left) {
+      return find_kth(tree[prst].l, tree[hist].l, l, y, k);
+    } else {
+      return find_kth(tree[prst].r, tree[hist].r , y + 1, r, k - left);
+    }
+  }
+
+  inline void make_root() {
+    assert(idx == 0);
+    int root = build(lb, rb);
+    ptr.push_back(root);
+  }
+
+  template<typename T>
+  psegtree(const vector<T>& v, int lb, int rb) : lb(lb), rb(rb) {
+    n = (int) v.size();
+    idx = 0;
+    tree.resize(n << space);
+    make_root();
+  }
+
+  psegtree(int _n) : n(_n) {
+    idx = 0;
+    tree.resize(n << space);
+    make_root();
+  }
+
+  template<typename T>
+  int update(int l, int r, T val) {
+    int nd = update(ptr.back(), l, r, val);
+    ptr.push_back(nd);
+    return nd;
+  }
+
+  int find_kth(int l, int r, int k) {
+    assert(l > 0 && r < (int) ptr.size());
+    return find_kth(ptr[r], ptr[l - 1], lb, rb, k);
+  }
+};
+
+]]></content>
+  <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+  <tabTrigger>psegtree</tabTrigger>
+  <!-- Optional: Set a scope to limit where the snippet will trigger -->
+  <scope>source.c++</scope>
+</snippet>
