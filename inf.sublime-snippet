@@ -1,6 +1,6 @@
 <snippet>
   <content><![CDATA[
-template <typename T> static constexpr T inf = numeric_limits<T>::max() / 2;
+template <typename T> static constexpr T inf = static_cast<T>(numeric_limits<T>::max() / 2);
 ]]></content>
   <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
   <tabTrigger>inf</tabTrigger>
